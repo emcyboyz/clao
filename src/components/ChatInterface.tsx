@@ -4,6 +4,7 @@ import ChatMessage from './ChatMessage';
 import { sendMessageToGroq } from '../services/groqApi';
 
 interface Message {
+  id: string;
   role: 'user' | 'assistant';
   content: string;
 }
@@ -11,14 +12,14 @@ interface Message {
 function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([
     {
+      id: 'initial',
       role: 'assistant',
-      content: 'Aiyah hello! I am Clao lah! Your dumb Asian AI assistant. Ask me anything and I give you super confuse answer sia! 😵‍💫'
+      content: 'Aiyah hello! I am Clao lah! Your dumb Asian AI assistant. Ask me anything and I give you super confuse answer sia! 😵‍💫🧋'
     }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -34,24 +35,34 @@ function ChatInterface() {
     const userMessage = input.trim();
     setInput('');
 
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    let currentMessages: Message[] = [];
+
+    setMessages(prev => {
+      const newMsg = {
+        id: Date.now().toString(),
+        role: 'user' as const,
+        content: userMessage
+      };
+      currentMessages = [...prev, newMsg];
+      return currentMessages;
+    });
+
     setIsLoading(true);
 
     try {
-      const response = await sendMessageToGroq([
-        ...messages,
-        { role: 'user', content: userMessage }
-      ]);
+      const response = await sendMessageToGroq(currentMessages);
 
-      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant' as const,
+        content: response
+      }]);
     } catch (error) {
-      setMessages(prev => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: 'Aiyah! My brain explode lah! Error happen sia! Maybe try again later? Or maybe I just too dumb to answer your question. Go drink bubble tea and come back leh! 🧋'
-        }
-      ]);
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant' as const,
+        content: 'Aiyah! My brain explode lah! Error happen sia! Go drink bubble tea and come back leh! 🧋🍜'
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -65,50 +76,62 @@ function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div
-        ref={chatContainerRef}
-        className="flex-1 overflow-y-auto px-4 py-6 space-y-4"
-        style={{ maxHeight: 'calc(100vh - 300px)' }}
-      >
-        {messages.map((msg, idx) => (
-          <ChatMessage key={idx} role={msg.role} content={msg.content} />
-        ))}
+    <div className="flex flex-col h-screen bg-gradient-to-b from-black via-[#0a0a0a] to-black text-white">
+      {/* Main Chat Area */}
+      <div className="flex-1 overflow-y-auto px-4 py-8 max-w-4xl mx-auto w-full">
+        <div className="space-y-6">
+          {messages.map((msg) => (
+            <ChatMessage
+              key={msg.id}
+              role={msg.role}
+              content={msg.content}
+            />
+          ))}
 
-        {isLoading && (
-          <div className="flex justify-start mb-4">
-            <div className="bg-[#222] text-gray-100 border border-gray-700 rounded-lg px-4 py-3">
-              <div className="text-xs font-mono text-gray-400 mb-1">Clao</div>
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          {/* Typing Indicator - Claude Style */}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-[#1a1a1a] rounded-2xl px-5 py-4 max-w-2xl shadow-lg border border-gray-800">
+                <div className="flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                  <span className="text-gray-400 text-sm">Clao is thinking lah...</span>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      <div className="border-t border-gray-800 p-4 bg-black">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Ask me something dumb lah..."
-            disabled={isLoading}
-            className="flex-1 bg-[#111] text-white border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          <button
-            onClick={handleSend}
-            disabled={isLoading || !input.trim()}
-            className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg transition-colors flex items-center justify-center"
-          >
-            <Send size={20} />
-          </button>
+      {/* Input Bar - Fixed at Bottom, Claude-Inspired */}
+      <div className="border-t border-gray-800 bg-black/80 backdrop-blur-lg px-4 py-5">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Ask Uncle Clao anything lah..."
+              disabled={isLoading}
+              className="flex-1 bg-[#111111] border border-gray-700 rounded-2xl px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all disabled:opacity-60"
+            />
+            <button
+              onClick={handleSend}
+              disabled={isLoading || !input.trim()}
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white p-4 rounded-2xl transition-all shadow-lg hover:shadow-purple-600/30 flex items-center justify-center"
+            >
+              <Send size={22} />
+            </button>
+          </div>
+          <p className="text-center text-gray-500 text-xs mt-3">
+            Clao can make mistakes sia. Don't take uncle advice too serious lah 🧋
+          </p>
         </div>
       </div>
     </div>
