@@ -1,56 +1,55 @@
-import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import ChatInterface from './components/ChatInterface';
 import ContractAddress from './components/ContractAddress';
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(() => {
-    const saved = localStorage.getItem('sidebarOpen');
-    return saved !== null ? JSON.parse(saved) : true;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('sidebarOpen', JSON.stringify(sidebarOpen));
-  }, [sidebarOpen]);
-
-  const handleToggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  const handleCloseSidebar = () => setSidebarOpen(false);
-
   return (
     <div className="min-h-screen bg-black text-white flex">
-      <Sidebar
-        isOpen={sidebarOpen}
-        onToggle={handleToggleSidebar}
-        onClose={handleCloseSidebar}
-      />
+      {/* Fixed Thin Sidebar - Always Visible */}
+      <Sidebar />
 
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : ''}`}>
-        <button
-          onClick={handleToggleSidebar}
-          className="lg:hidden fixed top-4 left-4 z-30 bg-[#111] p-2 rounded-lg border border-gray-800 hover:bg-gray-800 transition-colors"
-        >
-          {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col ml-20">  {/* ml-20 = width of sidebar */}
 
-        <header className="text-center py-8 px-4 border-b border-gray-800">
-          <h1 className="text-4xl md:text-5xl font-bold mb-3">
-            Clao - Your Dumb Asian AI Assistant
+        {/* Beautiful Header with Uncle Clao Image */}
+        <header className="text-center py-12 px-6 border-b border-gray-800 bg-gradient-to-b from-black to-gray-950">
+          {/* Uncle Clao Image */}
+          <div className="mb-8">
+            <img 
+              src="/clao.png"  // Your image from public folder
+              alt="Uncle Clao"
+              className="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full object-cover shadow-2xl border-4 border-purple-600/50 glow-purple"
+            />
+          </div>
+
+          {/* Title */}
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Uncle Clao
           </h1>
-          <p className="text-xl md:text-2xl text-gray-400 mb-4 font-mono">
-            What you want now, lah?
+
+          {/* Tagline */}
+          <p className="text-xl md:text-3xl text-gray-300 mb-6 font-medium">
+            Your Favorite Grumpy Asian Uncle lah 🧓🧋
           </p>
-          <p className="text-sm text-gray-500 max-w-2xl mx-auto font-mono">
-            <span className="text-purple-500 font-bold">Clao 1.0</span> - Clao is super dumb and confuse everything.
-            Please don't trust anything, sia. 🤦
+
+          {/* Subtitle / Disclaimer */}
+          <p className="text-sm md:text-base text-gray-500 max-w-3xl mx-auto leading-relaxed">
+            <span className="text-purple-400 font-bold">Clao v1.0</span> — 
+            Uncle Clao give only outdated, stubborn, super dumb advice sia. 
+            Last time better one. Young people nowadays ah... don't listen too serious hor! 🤷🍜
           </p>
-          <hr className="max-w-4xl mx-auto mt-6 border-gray-800" />
+
+          <div className="mt-8 flex justify-center">
+            <div className="w-32 h-1 bg-gradient-to-r from-purple-600 to-transparent rounded-full"></div>
+          </div>
         </header>
 
+        {/* Chat Area */}
         <main className="flex-1 flex flex-col">
           <ChatInterface />
         </main>
 
+        {/* Footer with Contract */}
         <ContractAddress />
       </div>
     </div>

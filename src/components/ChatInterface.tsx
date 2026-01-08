@@ -14,7 +14,7 @@ function ChatInterface() {
     {
       id: 'initial',
       role: 'assistant',
-      content: 'Aiyah hello! I am Clao lah! Your dumb Asian AI assistant. Ask me anything and I give you super confuse answer sia! 😵‍💫🧋'
+      content: 'Aiyah! Who disturb uncle ah? I am Uncle Clao lah 🧓 Your favorite grumpy Asian uncle. Ask me anything, but young people nowadays ah... better listen properly sia! Go drink kopi first then talk 🧋☕'
     }
   ]);
   const [input, setInput] = useState('');
@@ -61,7 +61,7 @@ function ChatInterface() {
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant' as const,
-        content: 'Aiyah! My brain explode lah! Error happen sia! Go drink bubble tea and come back leh! 🧋🍜'
+        content: 'Wah lao eh! Uncle brain explode already sia! Connection problem lah. Go eat chicken rice wait a while then try again hor 🍗🧓💥'
       }]);
     } finally {
       setIsLoading(false);
@@ -88,7 +88,7 @@ function ChatInterface() {
             />
           ))}
 
-          {/* Typing Indicator - Claude Style */}
+          {/* Typing Indicator - Uncle Style */}
           {isLoading && (
             <div className="flex justify-start">
               <div className="bg-[#1a1a1a] rounded-2xl px-5 py-4 max-w-2xl shadow-lg border border-gray-800">
@@ -98,7 +98,7 @@ function ChatInterface() {
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                   </div>
-                  <span className="text-gray-400 text-sm">Clao is thinking lah...</span>
+                  <span className="text-gray-400 text-sm">Uncle Clao is grumbling lah...</span>
                 </div>
               </div>
             </div>
@@ -108,7 +108,7 @@ function ChatInterface() {
         </div>
       </div>
 
-      {/* Input Bar - Fixed at Bottom, Claude-Inspired */}
+      {/* Input Bar - Fixed at Bottom */}
       <div className="border-t border-gray-800 bg-black/80 backdrop-blur-lg px-4 py-5">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3">
@@ -117,7 +117,7 @@ function ChatInterface() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="Ask Uncle Clao anything lah..."
+              placeholder="Ask Uncle Clao anything lah... but better be good question hor 🧓"
               disabled={isLoading}
               className="flex-1 bg-[#111111] border border-gray-700 rounded-2xl px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all disabled:opacity-60"
             />
@@ -130,7 +130,7 @@ function ChatInterface() {
             </button>
           </div>
           <p className="text-center text-gray-500 text-xs mt-3">
-            Clao can make mistakes sia. Don't take uncle advice too serious lah 🧋
+            Uncle Clao only gives stubborn, outdated advice sia. Last time better one. Don't complain if wrong lah 🧓🍜
           </p>
         </div>
       </div>

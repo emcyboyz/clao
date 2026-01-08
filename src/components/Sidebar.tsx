@@ -4,7 +4,7 @@ function Sidebar() {
       {/* Custom Logo - REPLACE THE URL BELOW WITH YOUR IMAGE LINK */}
       <a href="/clao/src/clao.png" className="block group">
         <img 
-          src="/clao/src/clao.png"  // ← PASTE YOUR IMAGE URL HERE
+          src="/clao.png"  // ← PASTE YOUR IMAGE URL HERE
           alt="Clao Logo"
           className="w-12 h-12 object-cover rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-200 border border-purple-700"
         />
