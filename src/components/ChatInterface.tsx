@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Send } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import { sendMessageToGroq } from '../services/groqApi';
@@ -19,15 +19,6 @@ function ChatInterface() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -77,9 +68,11 @@ function ChatInterface() {
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-black via-[#0a0a0a] to-black text-white">
-      {/* Main Chat Area */}
-      <div className="flex-1 overflow-y-auto px-4 py-8 max-w-4xl mx-auto w-full">
-        <div className="space-y-6">
+      {/* Full scrollable chat container */}
+      <div 
+        className="flex-1 overflow-y-auto px-4 py-8"
+      >
+        <div className="space-y-6 max-w-4xl mx-auto">
           {messages.map((msg) => (
             <ChatMessage
               key={msg.id}
@@ -88,7 +81,7 @@ function ChatInterface() {
             />
           ))}
 
-          {/* Typing Indicator - Uncle Style */}
+          {/* Typing Indicator */}
           {isLoading && (
             <div className="flex justify-start">
               <div className="bg-[#1a1a1a] rounded-2xl px-5 py-4 max-w-2xl shadow-lg border border-gray-800">
@@ -104,14 +97,12 @@ function ChatInterface() {
             </div>
           )}
 
-          <div ref={messagesEndRef} />
+          {/* No more end ref → no forced scrolling */}
         </div>
-      </div>
 
-      {/* Input Bar - Fixed at Bottom */}
-      <div className="border-t border-gray-800 bg-black/80 backdrop-blur-lg px-4 py-5">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3">
+        {/* Input box placed INSIDE the scrollable area, right after messages */}
+        <div className="max-w-4xl mx-auto mt-6 pb-6">
+          <div className="flex items-center gap-3 bg-black/60 backdrop-blur-lg border border-gray-800 rounded-2xl px-4 py-4 shadow-lg">
             <input
               type="text"
               value={input}
@@ -119,16 +110,18 @@ function ChatInterface() {
               onKeyDown={handleKeyPress}
               placeholder="Ask Uncle Clao anything lah... but better be good question hor 🧓"
               disabled={isLoading}
-              className="flex-1 bg-[#111111] border border-gray-700 rounded-2xl px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all disabled:opacity-60"
+              className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none"
             />
             <button
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
-              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white p-4 rounded-2xl transition-all shadow-lg hover:shadow-purple-600/30 flex items-center justify-center"
+              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-all"
             >
-              <Send size={22} />
+              <Send size={20} />
             </button>
           </div>
+
+          {/* Small disclaimer below input */}
           <p className="text-center text-gray-500 text-xs mt-3">
             Uncle Clao only gives stubborn, outdated advice sia. Last time better one. Don't complain if wrong lah 🧓🍜
           </p>
