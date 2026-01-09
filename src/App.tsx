@@ -4,52 +4,53 @@ import ContractAddress from './components/ContractAddress';
 
 function App() {
   return (
-    <div className="min-h-screen bg-black text-white flex">
-      {/* Fixed Thin Sidebar - Always Visible */}
+    <div className="min-h-screen bg-black text-white">
+      {/* Fixed Thin Sidebar */}
       <Sidebar />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-20">  {/* ml-20 = width of sidebar */}
+      {/* Main Content Area - Offset by sidebar width */}
+      <div className="ml-20 flex flex-col min-h-screen">
+       {/* Compact Top Bar - Full-width with separate background */}
+<header className="border-b border-gray-800 bg-gray-950 px-8 py-6 shadow-md">
+  <div className="flex items-center justify-center gap-4">
+    <img
+      src="/clao.png"
+      alt="Uncle Clao"
+      className="w-12 h-12 rounded-lg object-cover"
+    />
+    <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+      Uncle Clao
+    </h1>
+  </div>
+</header>
 
-        {/* Beautiful Header with Uncle Clao Image */}
-        <header className="text-center py-12 px-6 border-b border-gray-800 bg-gradient-to-b from-black to-gray-950">
-          {/* Uncle Clao Image */}
-          <div className="mb-8">
-            <img 
-              src="/clao.png"  // Your image from public folder
-              alt="Uncle Clao"
-              className="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full object-cover shadow-2xl border-4 border-purple-600/50 glow-purple"
-            />
+        {/* Welcome Section */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+          <div className="text-center max-w-3xl">
+            {/* Greeting with clao.png image beside text - image spinning, no purple border */}
+            <div className="flex items-center justify-center gap-6 mb-6">
+              <img
+                src="/clao.png"
+                alt="Uncle Clao"
+                className="w-28 h-18 md:w-16 md:h-16 rounded-full object-cover shadow-lg animate-spin-slow"
+              />
+              <h2 className="text-4xl md:text-5xl font-bold text-white">
+                Hallo Nephew!
+              </h2>
+            </div>
+
+            <p className="text-gray-400 text-lg md:text-xl mb-8">
+              Uncle Left foot currently running a business, Right foot running for president.
+            </p>
+
+            {/* Chat Input Section */}
+            <div className="w-full max-w-2xl">
+              <ChatInterface />
+            </div>
           </div>
+        </div>
 
-          {/* Title */}
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Uncle Clao
-          </h1>
-
-          {/* Tagline */}
-          <p className="text-xl md:text-3xl text-gray-300 mb-6 font-medium">
-            Your Favorite Grumpy Asian Uncle lah 🧓🧋
-          </p>
-
-          {/* Subtitle / Disclaimer */}
-          <p className="text-sm md:text-base text-gray-500 max-w-3xl mx-auto leading-relaxed">
-            <span className="text-purple-400 font-bold">Clao v1.0</span> — 
-            Uncle Clao give only outdated, stubborn, super dumb advice sia. 
-            Last time better one. Young people nowadays ah... don't listen too serious hor! 🤷🍜
-          </p>
-
-          <div className="mt-8 flex justify-center">
-            <div className="w-32 h-1 bg-gradient-to-r from-purple-600 to-transparent rounded-full"></div>
-          </div>
-        </header>
-
-        {/* Chat Area */}
-        <main className="flex-1 flex flex-col">
-          <ChatInterface />
-        </main>
-
-        {/* Footer with Contract */}
+        {/* Contract Address at Bottom */}
         <ContractAddress />
       </div>
     </div>
