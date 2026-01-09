@@ -10,8 +10,8 @@ function App() {
 
       {/* Main Content Area - Offset by sidebar width */}
       <div className="ml-20 flex flex-col min-h-screen">
-       {/* Compact Top Bar - Full-width with separate background */}
-<header className="border-b border-gray-800 bg-gray-950 px-8 py-6 shadow-md">
+        {/* Compact Top Bar - Logo + Title */}
+        <header className="border-b border-gray-800 bg-gray-950 px-8 py-6 shadow-md">
   <div className="flex items-center justify-center gap-4">
     <img
       src="/clao.png"
@@ -32,7 +32,7 @@ function App() {
               <img
                 src="/clao.png"
                 alt="Uncle Clao"
-                className="w-28 h-18 md:w-16 md:h-16 rounded-full object-cover shadow-lg animate-spin-slow"
+                className="w-28 h-28 md:w-16 md:h-16 rounded-full object-cover shadow-lg animate-spin-slow"
               />
               <h2 className="text-4xl md:text-5xl font-bold text-white">
                 Hallo Nephew!
