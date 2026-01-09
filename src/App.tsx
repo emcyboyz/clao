@@ -43,8 +43,8 @@ function App() {
               Uncle Left foot currently running a business, Right foot running for president.
             </p>
 
-            {/* Chat Input Section */}
-            <div className="w-full max-w-2xl">
+           {/* Chat Input Section */}
+           <div className="w-full max-w-2xl">
               <ChatInterface />
             </div>
           </div>
