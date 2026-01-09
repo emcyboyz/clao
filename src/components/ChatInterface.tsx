@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { Send } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Send, ChevronDown } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import { sendMessageToGroq } from '../services/groqApi';
 
@@ -10,21 +10,29 @@ interface Message {
 }
 
 function ChatInterface() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'initial',
-      role: 'assistant',
-      content: 'Aiyah! Who disturb uncle ah? I am Uncle Clao lah 🧓 Your favorite grumpy Asian uncle. Ask me anything, but young people nowadays ah... better listen properly sia! Go drink kopi first then talk 🧋☕'
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (showChat) {
+      scrollToBottom();
+    }
+  }, [messages, showChat]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
     setInput('');
+    setShowChat(true);
 
     let currentMessages: Message[] = [];
 
@@ -41,7 +49,10 @@ function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const response = await sendMessageToGroq(currentMessages);
+      const response = await sendMessageToGroq([
+        ...messages,
+        { role: 'user' as const, content: userMessage }
+      ]);
 
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
@@ -67,66 +78,68 @@ function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-black via-[#0a0a0a] to-black text-white">
-      {/* Full scrollable chat container */}
-      <div 
-        className="flex-1 overflow-y-auto px-4 py-8"
-      >
-        <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="w-full flex flex-col gap-6">
+      {/* Chat Input Box - Always Visible */}
+      <div className="bg-[#1a1a2e]/60 backdrop-blur-lg border border-gray-800 rounded-3xl px-6 py-5 shadow-2xl hover:border-gray-700 transition-all">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="How can I mildly confuse you today?"
+          disabled={isLoading}
+          className="w-full bg-transparent text-white placeholder-gray-500 focus:outline-none text-lg"
+        />
+
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-700">
+          <button className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
+            <span>Uncle Clao - thoughts buffering</span>
+            <ChevronDown size={16} />
+          </button>
+
+          <button
+            onClick={handleSend}
+            disabled={isLoading || !input.trim()}
+            className="bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white p-3 rounded-lg transition-all"
+            title="Send"
+          >
+            <Send size={18} />
+          </button>
+        </div>
+      </div>
+
+      {/* Chat History - Expandable */}
+      {showChat && (
+        <div
+          ref={chatContainerRef}
+          className="max-h-96 overflow-y-auto bg-black/40 backdrop-blur-md border border-gray-800 rounded-2xl p-6 space-y-4"
+        >
           {messages.map((msg) => (
             <ChatMessage
               key={msg.id}
               role={msg.role}
               content={msg.content}
+              id={msg.id}
             />
           ))}
 
-          {/* Typing Indicator */}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-[#1a1a1a] rounded-2xl px-5 py-4 max-w-2xl shadow-lg border border-gray-800">
+              <div className="bg-[#1a1a1a] rounded-2xl px-4 py-3 border border-gray-800">
                 <div className="flex items-center space-x-2">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                   </div>
-                  <span className="text-gray-400 text-sm">Uncle Clao is grumbling lah...</span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* No more end ref → no forced scrolling */}
+          <div ref={messagesEndRef} />
         </div>
-
-        {/* Input box placed INSIDE the scrollable area, right after messages */}
-        <div className="max-w-4xl mx-auto mt-6 pb-6">
-          <div className="flex items-center gap-3 bg-black/60 backdrop-blur-lg border border-gray-800 rounded-2xl px-4 py-4 shadow-lg">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              placeholder="Ask Uncle Clao anything lah... but better be good question hor 🧓"
-              disabled={isLoading}
-              className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none"
-            />
-            <button
-              onClick={handleSend}
-              disabled={isLoading || !input.trim()}
-              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-all"
-            >
-              <Send size={20} />
-            </button>
-          </div>
-
-          {/* Small disclaimer below input */}
-          <p className="text-center text-gray-500 text-xs mt-3">
-            Uncle Clao only gives stubborn, outdated advice sia. Last time better one. Don't complain if wrong lah 🧓🍜
-          </p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
